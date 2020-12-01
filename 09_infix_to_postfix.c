@@ -37,7 +37,7 @@ int isEmpty(Stack *s) {
     return s->topIdx == -1;
 }
 
-int initStack(Stack* s) {
+void initStack(Stack* s) {
     s->topIdx = -1;
 }
 

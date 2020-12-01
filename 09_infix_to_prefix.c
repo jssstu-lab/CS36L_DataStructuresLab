@@ -23,13 +23,14 @@ void pop(Stack* s, char out[]) {
         printf("Stack empty. Stack underflow. \n");
         return;
     }
-    strcpy(out, s->items[s->topIdx--]);
+    if (out != NULL) strcpy(out, s->items[s->topIdx--]);
+    else s->topIdx--;
 }
 
 char* peek(Stack *s) {
     if (s->topIdx == -1) {
         printf("Stack empty. Stack underflow. \n");
-        return;
+        return NULL;
     }
     return s->items[s->topIdx];
 }
@@ -78,14 +79,24 @@ int stackPrecedence(char op) {
     }
 }
 
+void combineAndPush(Stack* operandStack, Stack* operatorStack) {
+    char oprand1[MAX_STRING_SIZE], oprand2[MAX_STRING_SIZE], op[MAX_STRING_SIZE];
+    pop(operandStack, oprand2);
+    pop(operatorStack, op);
+    pop(operandStack, oprand1);
+    strcat(oprand1, oprand2);
+    strcat(op, oprand1);
+    push(operandStack, op);
+}
+
 void infixToPrefix(char infix[], char prefix[]) {
     Stack operatorStack, operandStack;
     initStack(&operatorStack);
     initStack(&operandStack);
 
     int infixIdx = 0;
-    while (infix[infixIdx] != '\0') {
-        char inputChar = infix[infixIdx];
+    char inputChar;
+    while ((inputChar = infix[infixIdx]) != '\0') {
         if (isOperator(inputChar)) {
             if (isEmpty(&operatorStack) || (inputPrecedence(inputChar) > stackPrecedence(peek(&operatorStack)[0]))) {
                 char opStr[] = " ";
@@ -93,30 +104,17 @@ void infixToPrefix(char infix[], char prefix[]) {
                 push(&operatorStack, opStr);
             } else {
                 while (!isEmpty(&operatorStack) && (inputPrecedence(inputChar) < stackPrecedence(peek(&operatorStack)[0]))) {
-                    char oprand1[MAX_STRING_SIZE], oprand2[MAX_STRING_SIZE], op[MAX_STRING_SIZE];
-                    pop(&operandStack, oprand2);
-                    pop(&operatorStack, op);
-                    pop(&operandStack, oprand1);
-                    strcat(oprand1, oprand2);
-                    strcat(op, oprand1);
-                    push(&operandStack, op);
+                    combineAndPush(&operandStack, &operatorStack);
                 }
                 char opStr[] = " ";
                 opStr[0] = inputChar;
                 push(&operatorStack, opStr);
             }
-        } else if (infix[infixIdx] == ')') {
+        } else if (inputChar == ')') {
             while (peek(&operatorStack)[0] != '(') {
-                char oprand1[MAX_STRING_SIZE], oprand2[MAX_STRING_SIZE], op[MAX_STRING_SIZE];
-                pop(&operandStack, oprand2);
-                pop(&operatorStack, op);
-                pop(&operandStack, oprand1);
-                strcat(oprand1, oprand2);
-                strcat(op, oprand1);
-                push(&operandStack, op);
+                combineAndPush(&operandStack, &operatorStack);
             }
-            char discard[2];
-            pop(&operatorStack, discard); // discard (
+            pop(&operatorStack, NULL); // discard (
         } else {
             char oprndStr[] = " ";
             oprndStr[0] = inputChar;
@@ -124,14 +122,8 @@ void infixToPrefix(char infix[], char prefix[]) {
         }
         infixIdx++;
     }
-    while (!isEmpty(&operatorStack)) {
-        char oprand1[MAX_STRING_SIZE], oprand2[MAX_STRING_SIZE], op[MAX_STRING_SIZE];
-        pop(&operandStack, oprand2);
-        pop(&operatorStack, op);
-        pop(&operandStack, oprand1);
-        strcat(oprand1, oprand2);
-        strcat(op, oprand1);
-        push(&operandStack, op);
+    while (!isEmpty(&operatorStack) && !isEmpty(&operandStack)) {
+        combineAndPush(&operandStack, &operatorStack);
     }
 
     pop(&operandStack, prefix);
