@@ -82,8 +82,8 @@ void infixToPostfix(char infix[], char postfix[]) {
     initStack(&operatorStack);
 
     int infixIdx = 0, postfixIdx = 0;
-    while (infix[infixIdx] != '\0') {
-        char inputChar = infix[infixIdx];
+    char inputChar;
+    while ((inputChar = infix[infixIdx]) != '\0') {
         if (isOperator(inputChar)) {
             if (isEmpty(&operatorStack) || (inputPrecedence(inputChar) > stackPrecedence(peek(&operatorStack)))) {
                 push(&operatorStack, inputChar);
@@ -92,12 +92,12 @@ void infixToPostfix(char infix[], char postfix[]) {
                     postfix[postfixIdx++] = pop(&operatorStack);
                 push(&operatorStack, inputChar);
             }
-        } else if (infix[infixIdx] == ')') {
+        } else if (inputChar == ')') {
             while (peek(&operatorStack) != '(')
                 postfix[postfixIdx++] = pop(&operatorStack);
             pop(&operatorStack); // discard (
         } else {
-            postfix[postfixIdx++] = infix[infixIdx];
+            postfix[postfixIdx++] = inputChar;
         }
         infixIdx++;
     }
@@ -117,4 +117,5 @@ int main() {
         infixToPostfix(infix, postfix);
         printf("%s\n", postfix);
     }
+    return 0;
 }

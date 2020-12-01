@@ -139,4 +139,5 @@ int main() {
         infixToPrefix(infix, prefix);
         printf("%s\n", prefix);
     }
+    return 0;
 }
