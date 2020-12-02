@@ -58,7 +58,8 @@ double compute(double operand1, double operand2, char op) {
                     printf("Division by zero. \n");
                     return 0;
                 }
-        case '^': return pow(operand1, operand2);
+        case '^': 
+        case '$': return pow(operand1, operand2);
     }
 }
 
