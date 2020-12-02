@@ -26,14 +26,6 @@ double pop(Stack* s) {
     return s->items[s->topIdx--];
 }
 
-double peek(Stack *s) {
-    if (s->topIdx == -1) {
-        printf("Stack empty. Stack underflow. \n");
-        return -1;
-    }
-    return s->items[s->topIdx];
-}
-
 int isEmpty(Stack *s) {
     return s->topIdx == -1;
 }
