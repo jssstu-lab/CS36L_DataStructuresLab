@@ -197,17 +197,22 @@ void searchUtil(Node root) {
     }
 }
 
-void delete(Node root) {
+Node delete(Node root) {
     int key;
     printf("Enter key of the element to delete: ");
     scanf("%d", &key);
+
+    if (root->info == key && root->llink == NULL && root->rlink == NULL) {
+        free(root);
+        return NULL;
+    }
 
     Node parentNode = NULL, deleteNode;
     deleteNode = search(root, key, &parentNode);
 
     if (!deleteNode) {
         printf("Key not found!~\n");
-        return;
+        return root;
     }
 
     if (deleteNode->llink == NULL && deleteNode->rlink == NULL) {
@@ -253,20 +258,16 @@ void delete(Node root) {
             free(is);
         } else {
             // single child case
-            if (isp->llink == is) {
-                if (is->llink)
-                    isp->llink = is->llink;
-                else
-                    isp->llink = is->rlink;
-            } else {
-                if (is->llink)
-                    isp->rlink = is->llink;
-                else
-                    isp->rlink = is->rlink;
-            }
+            if (isp->llink == is) 
+                isp->llink = is->rlink;
+            else
+                isp->rlink = is->rlink;
+
             free(is);
         }
     }
+
+    return root;
 }
 
 int max(int a, int b) {
@@ -313,7 +314,7 @@ void printMenu() {
 }
 
 int main() {
-    Node root = NULL, copyRoot;
+    Node root = NULL, copyRoot = NULL;
 
     int isRunning = 1;
     while (isRunning) {
@@ -333,7 +334,7 @@ int main() {
                 searchUtil(root);
                 break;
             case 4:
-                delete(root);
+                root = delete(root);
                 break;
             case 5:
                 printf("Height/Depth of the tree = %d\n", findHeight(root));
