@@ -126,6 +126,11 @@ Node dequeue(Queue* q) {
 }
 
 void levelorder_traversal(Node root) { 
+    if (root == NULL) {
+        printf("Tree is empty. \n");
+        return;
+    }
+
     Queue q;
     initQueue(&q);
     enqueue(&q, root);
