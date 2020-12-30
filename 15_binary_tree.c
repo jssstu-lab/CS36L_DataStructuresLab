@@ -178,8 +178,10 @@ Node search(Node root, int key, Node* parentNode) {
     if (searchNode == NULL)
         searchNode = search(root->llink, key, parentNode);
     
-    if (searchNode == NULL)
+    if (searchNode == NULL) {
+        *parentNode = root;
         searchNode = search(root->rlink, key, parentNode);
+    }
 
     return searchNode;
 }
@@ -196,7 +198,7 @@ void searchUtil(Node root) {
         if (parentNode)
             printf("Key %d was found with parent %d\n", searchNode->info, parentNode->info);
         else
-            printf("Key %d was found at the root", searchNode->info);
+            printf("Key %d was found at the root\n", searchNode->info);
     } else {
         printf("Key %d not found.\n", key);
     }
@@ -310,7 +312,7 @@ void deleteTree(Node *root) {
 
 void printMenu() {
     printf("1. Insert element into tree\n");
-    printf("2. Display all traversals from the tree\n");
+    printf("2. Display all traversals of the tree\n");
     printf("3. Search key in tree\n");
     printf("4. Delete key from tree\n");
     printf("5. Find tree's height/depth\n");
