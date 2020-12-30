@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 struct node {
     int info;
@@ -13,51 +12,26 @@ Node insert(Node root) {
     Node newNode = (Node) malloc(sizeof(struct node));
     newNode->llink = newNode->rlink = NULL;
 
-    printf("Enter info to insert into tree: ");
+    printf("Enter element to insert into BST: ");
     scanf("%d", &newNode->info);
 
     if (root == NULL)
         return newNode;
-
-    int i, n;
-    Node curNode, parentNode;
-    char posStr[10];
-    do {
-        printf("Enter position to insert the element: ");
-        scanf("%s", posStr);
-
-        n = strlen(posStr);
-        curNode = root, parentNode = NULL;
-        for (i = 0; i < n; i++) {
-            if (curNode == NULL)
-                break;
-            
-            parentNode = curNode;
-            switch(posStr[i]) {
-                case 'L':
-                case 'l':
-                    curNode = curNode->llink;
-                    break;
-
-                case 'R':
-                case 'r':
-                    curNode = curNode->rlink;
-                    break;
-            }
-        }
-    } while (i != n || curNode != NULL);
-
-    switch(posStr[i-1]) {
-        case 'L':
-        case 'l':
-            parentNode->llink = newNode;
-            break;
-        case 'R':
-        case 'r':
-            parentNode->rlink = newNode;
-            break;
+    
+    Node curNode = root, parentNode = NULL;
+    while (curNode != NULL) {
+        parentNode = curNode;
+        if (newNode->info < curNode->info)
+            curNode = curNode->llink;
+        else
+            curNode = curNode->rlink;
     }
 
+    if (newNode->info < parentNode->info)
+        parentNode->llink = newNode;
+    else
+        parentNode->rlink = newNode;
+    
     return root;
 }
 
@@ -165,25 +139,19 @@ void display(Node root) {
 }
 
 Node search(Node root, int key, Node* parentNode) {
-    Node searchNode = NULL;
-
     if (root == NULL)
         return NULL;
-    
+
     if (key == root->info)
         return root;
-    
-    *parentNode = root;
 
-    if (searchNode == NULL)
-        searchNode = search(root->llink, key, parentNode);
-    
-    if (searchNode == NULL) {
+    if (key < root->info) {
         *parentNode = root;
-        searchNode = search(root->rlink, key, parentNode);
+        return search(root->llink, key, parentNode);
+    } else {
+        *parentNode = root;
+        return search(root->rlink, key, parentNode);
     }
-
-    return searchNode;
 }
 
 void searchUtil(Node root) {
